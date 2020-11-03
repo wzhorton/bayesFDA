@@ -216,7 +216,7 @@ List g2g_fda(arma::mat curves, arma::vec lasts, arma::vec time,
       tau2_sse += arma::as_scalar(bbdiff.t()*P*bbdiff);
     }
     tau2 = 1/rgamma(1, 0.5*ncrv*p, 1/(0.5*tau2_sse))(0);
-//Rcout << "sig2: " << sig2 << ", tau2: " << tau2 << ", tau2_sse: " << tau2_sse <<std::endl;
+
     // Saves
     if(it >= nburn){
       tau2_chain(it-nburn) = tau2;
