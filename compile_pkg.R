@@ -25,3 +25,5 @@ document() # devtools; creates namespace, documentation files, and compiles C
 # setting build_vignettes = FALSE may increase speed of install
 # if built with vignettes, use browseVignettes("pkgname") to view.
 install(build_vignettes = FALSE) # devtools; installation complete
+
+# build(binary = TRUE)
