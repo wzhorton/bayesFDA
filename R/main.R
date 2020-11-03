@@ -26,7 +26,7 @@ multi_group_fda <- function(data_list, p = 20, niter = 10000, nburn = 1000){
   lasts <- cumsum(sapply(data_list, ncol))
   time <- seq(0,1,len = nrow(data_list[[1]]))
   out <- .g2g_fda(as.matrix(as.data.frame(data_list)), lasts-1, time, p, niter, nburn)
-  names(out) <- c("tau2", "sig2","beta_grp", "beta_curve")
+  names(out) <- c("tau2", "sig2","beta_grp", "beta_crv")
   return(out)
 }
 
