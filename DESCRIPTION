@@ -1,0 +1,13 @@
+Package: bayesFDA
+Type: Package
+Title: Bayesian Functional Data Analysis Tools
+Version: 0.0.1
+Date: 2020-11-2
+Author: Zach Horton
+Maintainer: Zach Horton <example@somewhere.net>
+Description: This script provides tools to perform some basic Bayesian modeling with functional data.
+License: GPL-3
+Imports: Rcpp (>= 1.0.5)
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 7.1.1
+Depends: R (>= 3.0)
