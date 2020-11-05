@@ -5,6 +5,22 @@ using namespace Rcpp;
 
 // HELPER FUNCTIONS ////////////////////////////////////////////////////////////
 
+void vprint(arma::vec x, std::string msg){
+  Rcout << msg << ": " << x << std::endl;
+}
+void mprint(arma::mat x, std::string msg){
+  Rcout << msg << ": " << x << std::endl;
+}
+void iprint(arma::uword x, std::string msg){
+  Rcout << msg << ": " << x << std::endl;
+}
+void dprint(double x, std::string msg){
+  Rcout << msg << ": " << x << std::endl;
+}
+void nprint(std::string msg){
+  Rcout << msg << std::endl;
+}
+
 arma::vec rep4k(arma::vec u){
   int n = u.n_elem;
   double tmp3;
@@ -162,6 +178,7 @@ List g2g_fda(arma::mat curves, arma::vec lasts, arma::vec time,
     }
   }
   arma::mat P = penalty_mat(p);
+  arma::mat Pi = arma::inv_sympd(P);
 
   // Parameters
   double sig2 = 1;
@@ -182,7 +199,7 @@ List g2g_fda(arma::mat curves, arma::vec lasts, arma::vec time,
   beta_crv_chain.zeros();
 
   // Tmp variables
-  arma::mat VV;
+  arma::mat VVi;
   double sig2_sse;
   double tau2_sse;
   arma::vec bbdiff;
@@ -190,18 +207,19 @@ List g2g_fda(arma::mat curves, arma::vec lasts, arma::vec time,
   // MCMC //--------------------------------------------------------------------
 
   for(int it = 0; it < nburn+niter; it++){
+
     // Update beta_crv
+    VVi = arma::inv_sympd(1/tau2*P + 1/sig2*HtH);
     for(int i = 0; i < ncrv; i++){
-      VV = 1/tau2*P + 1/sig2*HtH;
-      beta_crv.col(i) = rmnorm(arma::solve(VV, (1/tau2*P*beta_grp.col(crv_grp(i)) + 1/sig2*Hty.col(i))), VV, true);
+      beta_crv.col(i) = rmnorm(VVi*(1/tau2*P*beta_grp.col(crv_grp(i)) + 1/sig2*Hty.col(i)), VVi, false);
     }
 
     // Update beta_grp
     for(int j = 0; j < ngrp; j++){
       if(j == 0){
-        beta_grp.col(j) = rmnorm(arma::mean(beta_crv.cols(0, lasts(j)),1), lasts(j)/tau2*P, true);
+        beta_grp.col(j) = rmnorm(arma::mean(beta_crv.cols(0, lasts(j)),1), 1/lasts(j)*tau2*Pi, false);
       } else {
-        beta_grp.col(j) = rmnorm(arma::mean(beta_crv.cols(lasts(j-1)+1, lasts(j)), 1), (lasts(j)-lasts(j-1))/tau2*P, true);
+        beta_grp.col(j) = rmnorm(arma::mean(beta_crv.cols(lasts(j-1)+1, lasts(j)), 1), 1/(lasts(j)-lasts(j-1))*tau2*Pi, false);
       }
     }
 
@@ -219,6 +237,7 @@ List g2g_fda(arma::mat curves, arma::vec lasts, arma::vec time,
 
     // Saves
     if(it >= nburn){
+      Rcout << "\r Iteration: " << it-nburn+1 << " / " << niter;
       tau2_chain(it-nburn) = tau2;
       sig2_chain(it-nburn) = sig2;
       beta_grp_chain.slice(it-nburn) = beta_grp;
