@@ -1,4 +1,4 @@
-#### data_handling.R ####
+#### main.R ####
 
 
 #-------------------------------------------------------------------------------
@@ -30,5 +30,68 @@ multi_group_fda <- function(data_list, p = 20, niter = 10000, nburn = 1000){
   return(out)
 }
 
+#' Extract areas of significance
+#'
+#' Given a 3-column matrix corresponding to the lower, average, and upper curves,
+#' extract the regions of significance, as well as the locations and value of
+#' the largest extrema.
+#'
+#' @usage extract_sig_area(trip)
+#'
+#' @param trip Matrix with three columns corresponding to the lower bound (
+#' first column), average curve (second column), and upper bound (third column).
+#'
+#' @return 4xk Matrix where each row is a significance region and the columns
+#' correspond to the beginning index, ending index, maximum location, and max value.
+#'
+#' @export
 
+extract_sig_area <- function(trip){
+  regions <- as.numeric(trip[,1]*trip[,3] > 0)
+  change_points <- diff(regions)
+  starts <- which(change_points == 1) + 1
+  ends <- which(change_points == -1)
+  if(head(regions,1) != 0){ starts <- c(1, starts) }
+  if(tail(regions,1) != 0){ ends <- c(ends, nrow(trip)) }
 
+  sig_mat <- cbind(starts, ends)
+  maxes <- apply(sig_mat, 1, function(r){
+    max_loc <- which.max(abs(trip[,2])) + r[1] - 1
+    max_val <- trip[,2][max_loc]
+    return(c(max_loc, max_val))
+  })
+  area_mat <- cbind(sig_mat, t(maxes))
+  colnames(area_mat) <- c("start","end","max_location","max_value")
+  return(area_mat)
+}
+
+#' Compute Cohen's d
+#'
+#' Calculates Cohen's d, a measure of effect size as well as confidence interval
+#' bounds.
+#'
+#' @usage cohend(diff, ns, sds, conf = 0.95)
+#'
+#' @param diff Numeric difference value
+#' @param ns Numeric vector containing the sample sizes of the two groups
+#' @param sds Numeris vector containing the sample standard deviations of the
+#' two groups (at the point of interest if taken on functional data).
+#' @param conf Numeric value giving the desired confidence level.
+#'
+#' @details Arguments are given in vector form so as to be more amenable to the
+#' structure of the package output. Confidence interval calculation comes from
+#' Hedge and Olkin (2014).
+#'
+#' @return A vector of length 3 containing the lower bound, the effect size,
+#' and the upper bound in that order.
+#'
+#' @export
+
+cohend <- function(diff, ns, sds, conf = 0.95){
+  poolsd <- sqrt(sum(sds^2*(ns-1))/sum(ns-1))
+  effect_size <- diff/poolsd
+  effect_se <- sqrt(sum(1/ns) + 0.5*effect_size^2/sum(ns))
+  es_vec <- effect_size + c(-1,0,1)*qnorm(conf)*effect_se
+  names(es_vec) <- c("es_lower","es","es_upper")
+  return(es_vec)
+}
