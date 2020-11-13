@@ -59,7 +59,7 @@ extract_sig_area <- function(trip){
     area_mat <- matrix(c(NA,NA,NA,NA), nrow=1)
   } else {
     maxes <- apply(sig_mat, 1, function(r){
-      max_loc <- which.max(abs(trip[,2])) + r[1] - 1
+      max_loc <- which.max(abs(trip[r[1]:r[2],2])) + r[1] - 1
       max_val <- trip[,2][max_loc]
       return(c(max_loc, max_val))
     })
