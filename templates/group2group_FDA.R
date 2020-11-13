@@ -31,13 +31,13 @@ num_header_rows = 3
 # Provide desired comparisons as a matrix of couplets. Order matters as the
 # second value will be subtracted from the first. Provide numbers corresponding
 # to the ordering of the above paths. For example, to compare group R minus
-# group A in the example above, you would enter c(3,1) as a couplet. The names
+# group A in the example above, you would enter 3,1 as a couplet line. The names
 # will be used for output labels.
 
-comparison_couplets <- matrix(
-  c(2,1),
-  c(3,1)
-, ncol = 2, byrow = TRUE)
+comparison_couplets <- matrix(c(
+  2,1,
+  3,1
+), ncol = 2, byrow = TRUE)
 rownames(comparison_couplets) <- c("Comp_BminusA", "Comp_RminusA")
 
 # Provide a path to a folder where output will be saved. Optionally, provide a
