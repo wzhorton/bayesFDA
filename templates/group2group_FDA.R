@@ -133,10 +133,14 @@ comp_area_list <- lapply(1:ncomp, function(trip_ind){
   trip <- comp_fit_list[[trip_ind]]
   ns <- n_vec[comparison_couplets[trip_ind,]]
   area_mat <- extract_sig_area(trip)
-  es_mat <- t(apply(area_mat, 1, function(area_vec){
-    max_loc <- area_vec[3]
-    cohend(diff = trip[,2][max_loc], ns, sd_curves[max_loc, comparison_couplets[trip_ind,]])
-  }))
+  if(all(is.na(area_mat))){
+    es_mat <- NA
+  } else {
+    es_mat <- t(apply(area_mat, 1, function(area_vec){
+      max_loc <- area_vec[3]
+      cohend(diff = trip[,2][max_loc], ns, sd_curves[max_loc, comparison_couplets[trip_ind,]])
+    }))
+  }
   return(cbind(area_mat, es_mat))
 })
 
