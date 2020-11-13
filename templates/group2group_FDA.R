@@ -160,6 +160,6 @@ for(i in 1:ngrp){
 for(i in 1:ncomp){
   write.csv(comp_fit_list[[i]], paste0(output_prefix,"_", rownames(comparison_couplets)[i],"_triplets.csv"),
             row.names = FALSE)
-  write.csv(grp_area_list[[i]], paste0(output_prefix,"_", rownames(comparison_couplets)[i],"_areas.csv"),
+  write.csv(comp_area_list[[i]], paste0(output_prefix,"_", rownames(comparison_couplets)[i],"_areas.csv"),
             row.names = FALSE)
 }
