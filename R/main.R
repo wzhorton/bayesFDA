@@ -55,12 +55,16 @@ extract_sig_area <- function(trip){
   if(tail(regions,1) != 0){ ends <- c(ends, nrow(trip)) }
 
   sig_mat <- cbind(starts, ends)
-  maxes <- apply(sig_mat, 1, function(r){
-    max_loc <- which.max(abs(trip[,2])) + r[1] - 1
-    max_val <- trip[,2][max_loc]
-    return(c(max_loc, max_val))
-  })
-  area_mat <- cbind(sig_mat, t(maxes))
+  if(length(sig_mat) == 0){
+    area_mat <- matrix(c(NA,NA,NA,NA), nrow=1)
+  } else {
+    maxes <- apply(sig_mat, 1, function(r){
+      max_loc <- which.max(abs(trip[,2])) + r[1] - 1
+      max_val <- trip[,2][max_loc]
+      return(c(max_loc, max_val))
+    })
+    area_mat <- cbind(sig_mat, t(maxes))
+  }
   colnames(area_mat) <- c("start","end","max_location","max_value")
   return(area_mat)
 }
