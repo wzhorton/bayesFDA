@@ -1,7 +1,7 @@
 Package: bayesFDA
 Type: Package
 Title: Bayesian Functional Data Analysis Tools
-Version: 0.4.0
+Version: 0.5.0
 Date: 2020-11-2
 Author: Zach Horton
 Maintainer: Zach Horton <example@somewhere.net>
