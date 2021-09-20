@@ -9,5 +9,5 @@ Description: This script provides tools to perform some basic Bayesian modeling 
 License: GPL-3
 Imports: Rcpp (>= 1.0.5)
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends: R (>= 3.0)

@@ -248,3 +248,85 @@ List g2g_fda(arma::mat curves, arma::vec lasts, arma::vec time,
   List chains = List::create(tau2_chain, sig2_chain, beta_grp_chain, beta_crv_chain);
   return chains;
 }
+
+
+// [[Rcpp::export(".cov_fda")]]
+List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, int nburn){
+  // SETUP //-------------------------------------------------------------------
+  // Constants
+  int ncrv = curves.n_cols;
+  int npts = curves.n_rows;
+  int ncov = X.n_cols;
+  arma::mat H = bs_even(time, p-2);
+  arma::mat HtH = H.t()*H;
+  arma::mat Hty = H.t()*curves;
+  arma::mat P = penalty_mat(p);
+  //arma::mat Pi = arma::inv_sympd(P);
+  arma::mat XtXiXt = inv_sympd(X.t()*X)*X.t();
+  arma::mat beta_prec = arma::kron(P, X.t()*X);
+  
+  // Parameters
+  double sig2 = 1;
+  double tau2 = 1;
+  arma::mat B(ncov,p);
+  B.zeros();
+  arma::mat Theta(ncrv, p);
+  Theta.zeros();
+  
+  // Save Structures
+  arma::vec sig2_chain(niter);
+  sig2_chain.zeros();
+  arma::vec tau2_chain(niter);
+  tau2_chain.zeros();
+  arma::cube B_chain(ncov, p, niter);
+  B_chain.zeros();
+  arma::cube Theta_chain(ncrv, p, niter);
+  Theta_chain.zeros();
+  
+  // Tmp variables
+  arma::mat Bhat = XtXiXt*Theta;
+  arma::vec beta = arma::vectorise(B);
+  arma::vec betahat = arma::vectorise(Bhat);
+  arma::vec VVi = arma::inv_sympd(1/tau2*P + 1/sig2*HtH);
+  double sig2_sse;
+  double tau2_sse;
+  arma::mat E;
+  
+  // MCMC //--------------------------------------------------------------------
+  
+  for(int it = 0; it < nburn+niter; it++){
+    
+    // Update Theta
+    VVi = arma::inv_sympd(1/tau2*P + 1/sig2*HtH);
+    for(int i = 0; i < ncrv; i++){
+      Theta.row(i) = rmnorm(VVi*(1/tau2*P*B.t()*X.row(i) + 1/sig2*Hty.col(i)), VVi, false);
+    }
+    
+    // Update B
+    Bhat = XtXiXt*Theta;
+    betahat = arma::vectorise(Bhat);
+    beta = rmnorm(betahat, 1/tau2*beta_prec, true);
+    B = arma::reshape(beta, ncov, p);
+    
+    // Update sig2
+    sig2_sse = arma::accu(arma::square(curves - H*Theta.t()));
+    sig2 = 1/rgamma(1, 0.5*ncrv*npts, 1/(0.5*sig2_sse))(0);
+    
+    // Update tau2
+    E = Theta - X*B;
+    tau2_sse = arma::trace((E.t()*E*P));
+    tau2 = 1/rgamma(1, 0.5*ncrv*p, 1/(0.5*tau2_sse))(0);
+    
+    // Saves
+    if(it >= nburn){
+      Rcout << "\r Iteration: " << it-nburn+1 << " / " << niter;
+      tau2_chain(it-nburn) = tau2;
+      sig2_chain(it-nburn) = sig2;
+      B_chain.slice(it-nburn) = B;
+      Theta_chain.slice(it-nburn) = Theta;
+    }
+  }
+  List chains = List::create(tau2_chain, sig2_chain, B_chain, Theta_chain);
+  return chains;
+}
+

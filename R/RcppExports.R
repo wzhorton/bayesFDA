@@ -9,3 +9,7 @@
     .Call('_bayesFDA_g2g_fda', PACKAGE = 'bayesFDA', curves, lasts, time, p, niter, nburn)
 }
 
+.cov_fda <- function(curves, X, time, p, niter, nburn) {
+    .Call('_bayesFDA_cov_fda', PACKAGE = 'bayesFDA', curves, X, time, p, niter, nburn)
+}
+
