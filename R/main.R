@@ -30,6 +30,26 @@ multi_group_fda <- function(data_list, p = 20, niter = 10000, nburn = 1000){
   return(out)
 }
 
+#' Covariate Incorporated Bayesian FDA
+#' 
+#' Fits a special case of a functional regression model
+#' 
+#' @usage cov_fda(data_mat, cov_mat, p = 20, niter = 10000, nburn = 1000)
+#' 
+#' @param data_mat matrix of observed curves organized into columns
+#' @param cov_mat matrix of observed covariates with covariates in rows
+#' 
+#' @return List of MCMC chains. Primary interest may lie in analyzing rows of B_chains.
+#' 
+#' @export
+
+cov_fda <- function(data_mat, cov_mat, p = 20, niter = 10000, nburn = 1000){
+  time <- seq(0,1,len = nrow(data_mat))
+  out <- .cov_fda(data_mat, cov_mat, time, p, niter, nburn)
+  names(out) <- c("tau2","sig2","B","Theta")
+  return(out)
+}
+
 #' Extract areas of significance
 #'
 #' Given a 3-column matrix corresponding to the lower, average, and upper curves,
