@@ -27,3 +27,4 @@ document() # devtools; creates namespace, documentation files, and compiles C
 install(build_vignettes = FALSE) # devtools; installation complete
 
 # build(binary = TRUE)
+.rs.restartR()
