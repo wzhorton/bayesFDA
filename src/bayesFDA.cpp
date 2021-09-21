@@ -287,7 +287,7 @@ List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, in
   arma::mat Bhat = XtXiXt*Theta;
   arma::vec beta = arma::vectorise(B);
   arma::vec betahat = arma::vectorise(Bhat);
-  arma::vec VVi = arma::inv_sympd(1/tau2*P + 1/sig2*HtH);
+  arma::mat VVi = arma::inv_sympd(1/tau2*P + 1/sig2*HtH);
   double sig2_sse;
   double tau2_sse;
   arma::mat E;
@@ -299,7 +299,7 @@ List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, in
     // Update Theta
     VVi = arma::inv_sympd(1/tau2*P + 1/sig2*HtH);
     for(int i = 0; i < ncrv; i++){
-      Theta.row(i) = rmnorm(VVi*(1/tau2*P*B.t()*X.row(i) + 1/sig2*Hty.col(i)), VVi, false);
+      Theta.row(i) = rmnorm(VVi*(1/tau2*P*B.t()*X.row(i).t() + 1/sig2*Hty.col(i)), VVi, false).t();
     }
     
     // Update B
@@ -315,7 +315,7 @@ List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, in
     // Update tau2
     E = Theta - X*B;
     tau2_sse = arma::trace((E.t()*E*P));
-    tau2 = 1/rgamma(1, 0.5*ncrv*p, 1/(0.5*tau2_sse))(0);
+    tau2 = 1/rgamma(1, 2 + 0.5*ncrv*p, 1/(2 + 0.5*tau2_sse))(0);
     
     // Saves
     if(it >= nburn){
