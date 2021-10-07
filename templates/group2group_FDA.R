@@ -1,3 +1,32 @@
+# Notes,
+
+# Generally really easy. Quick. 
+# At one point we talked about the directory loading. But keep it the way it is
+
+# remove save image
+# don't change output style
+# generate datqa from the model and check consistency.
+# Putting it all together and making it ID centric is easier.
+# Check if P is causing issues with the tied covariate variances.
+
+# Thoughts about the covariate model:
+# ID in the output.
+
+# Fixed covariate value. Specify baseline.
+# Does individual vs group covariate induce too much variability?
+# One column group indicator inpuit. Expect that.
+
+# Is there masking? Check that the outputs between the two models are the same.
+# Test if scale makes a difference of covariate. Maybe they are tied. (ikam and ikem)
+# See how significance (or lack) affects mean curve estimation. 
+# Not standardize? Just add it in later.
+# Remove time since surgery. 
+
+# We are on the time crunch. We need to get this submitted by Dec. 6
+
+
+
+
 # group2group_FDA.R
 
 # This script demonstrates group comparison functional data analysis using the
@@ -152,7 +181,7 @@ setwd(output_path)
 
 if(save_image){
   save.image(paste0(output_prefix,".Rdata"))
-}
+} 
 
 for(i in 1:ngrp){
   write.csv(grp_fit_list[[i]], paste0(output_prefix,"_", names(data_paths)[i],"_triplets.csv"),
