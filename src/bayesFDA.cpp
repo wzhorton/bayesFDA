@@ -261,6 +261,7 @@ List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, in
   arma::mat HtH = H.t()*H;
   arma::mat Hty = H.t()*curves;
   arma::mat P = penalty_mat(p);
+  arma::mat I; I.eye(p,p);
   //arma::mat Pi = arma::inv_sympd(P);
   arma::mat XtXiXt = inv_sympd(X.t()*X)*X.t();
   arma::mat beta_prec = arma::kron(P, X.t()*X);
@@ -315,7 +316,7 @@ List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, in
     // Update tau2
     E = Theta - X*B;
     tau2_sse = arma::trace((E.t()*E*P));
-    tau2 = 1/rgamma(1, 2 + 0.5*ncrv*p, 1/(2 + 0.5*tau2_sse))(0);
+    tau2 = 1/rgamma(1, 0 + 0.5*ncrv*p, 1/(0 + 0.5*tau2_sse))(0);
     
     // Saves
     if(it >= nburn){
@@ -326,7 +327,7 @@ List cov_fda(arma::mat curves, arma::mat X, arma::vec time, int p, int niter, in
       Theta_chain.slice(it-nburn) = Theta;
     }
   }
-  List chains = List::create(tau2_chain, sig2_chain, B_chain, Theta_chain);
+  List chains = List::create(tau2_chain, sig2_chain, B_chain, Theta_chain, H);
   return chains;
 }
 
