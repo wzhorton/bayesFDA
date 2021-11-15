@@ -46,7 +46,7 @@ multi_group_fda <- function(data_list, p = 20, niter = 10000, nburn = 1000){
 cov_fda <- function(data_mat, cov_mat, p = 20, niter = 10000, nburn = 1000){
   time <- seq(0,1,len = nrow(data_mat))
   out <- .cov_fda(data_mat, cov_mat, time, p, niter, nburn)
-  names(out) <- c("tau2","sig2","B","Theta")
+  names(out) <- c("tau2","sig2","B","Theta","H")
   return(out)
 }
 
@@ -118,4 +118,13 @@ cohend <- function(diff, ns, sds, conf = 0.95){
   es_vec <- effect_size + c(-1,0,1)*qnorm(conf)*effect_se
   names(es_vec) <- c("es_lower","es","es_upper")
   return(es_vec)
+}
+
+#' Plot CSV Tool
+#' 
+#' @export
+plot_csv <- function(path, main = "", ylim = NULL){
+  matplot(read.csv(path), type = "l", lty = c(2,1,2), col = c(4,2,4), 
+          main = main, ylim = ylim)
+  abline(h = 0, lwd = 0.5)
 }
