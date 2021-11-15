@@ -130,8 +130,8 @@ output_sig_regions <- TRUE
 # have little impact on overall analysis, but can help with computation speed
 # at the cost of some potential accuracy.
 
-num_spline_bases <- 20
-mcmc_iterations <- 10000
+num_spline_bases <- 25
+mcmc_iterations <- 25000
 mcmc_burnin <- round(mcmc_iterations/10)
 
 
@@ -278,8 +278,7 @@ if(error){
   grp_labs <- names(grp_design_mat)
   cov_labs <- setdiff(names(cov_mat),names(grp_design_mat))
   all_labs <- names(cov_mat)
-  basis <- splines::bs(seq(0,1,len = nrow(curves)), df = num_spline_bases, 
-                       intercept = FALSE)
+  basis <- fit$H
   
   setwd(output_folder_path)
   if(output_group_avgs){
