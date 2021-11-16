@@ -142,7 +142,7 @@ mcmc_burnin <- round(mcmc_iterations/10)
 # The bayesFDA package is hosted through GitHub at github.com/wzhorton/bayesFDA.
 # The easiest method to install is via the Devtools package:
 #   - Make sure you have the package "devtools" installed.
-#   - Run the command devtools::github_install("wzhorton/bayesFDA")
+#   - Run the command devtools::install_github("wzhorton/bayesFDA")
 # If the install fails, you are likely on MacOS. If so, follow these steps:
 #   - Go to github.com/wzhorton/bayesFDA/releases/latest
 #   - Download the bayesFDA MacOS binary file
