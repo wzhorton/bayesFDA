@@ -292,7 +292,8 @@ if(error){
                    apply(bchain, 1, function(bq) quantile(bq, 0.975)))
       write.csv(out, paste0(output_prefix,"-",g,"-GroupMean.csv"))
       if(output_sig_regions){
-        write.csv(extract_sig_area(out), paste0(output_prefix,"-",g,"-GroupMean-Areas.csv"))
+        write.csv(extract_sig_area(out), paste0(output_prefix,"-",g,"-GroupMean-Areas.csv"),
+                  row.names = FALSE, col.names = c("LB","Mean","UB"))
       }
     }
   }
@@ -304,7 +305,8 @@ if(error){
                    apply(bchain, 1, function(bq) quantile(bq, 0.975)))
       write.csv(out, paste0(output_prefix,"-",cc,"-Effect.csv"))
       if(output_sig_regions){
-        write.csv(extract_sig_area(out), paste0(output_prefix,"-",cc,"-Effect-Areas.csv"))
+        write.csv(extract_sig_area(out), paste0(output_prefix,"-",cc,"-Effect-Areas.csv"),
+                  row.names = FALSE, col.names = c("LB","Mean","UB"))
       }
     }
   }
@@ -318,7 +320,8 @@ if(error){
                    apply(bchain, 1, function(bq) quantile(bq, 0.975)))
       write.csv(out, paste0(output_prefix,"-",g2,"-minus-",g1,"-DiffMean.csv"))
       if(output_sig_regions){
-        write.csv(extract_sig_area(out), paste0(output_prefix,"-",g2,"-minus-",g1,"-DiffMean-Areas.csv"))
+        write.csv(extract_sig_area(out), paste0(output_prefix,"-",g2,"-minus-",g1,"-DiffMean-Areas.csv"),
+                  row.names = FALSE, col.names = c("LB","Mean","UB"))
       }
     }
   }
