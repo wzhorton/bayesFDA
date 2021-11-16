@@ -202,7 +202,7 @@ if(!error && !setequal(id_indv,id_curves)){
   error_msg <- "ERROR: Individual covariate names do not match baseline list"
 }
 
-for(i in 1:length(individual_covs_baselines)){
+for(i in seq_along(individual_covs_baselines)){
   cov_base <- individual_covs_baselines[[i]]
   cov_name <- names(individual_covs_baselines)[i]
   if(cov_base == "avg"){
